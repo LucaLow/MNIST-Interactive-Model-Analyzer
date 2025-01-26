@@ -34,6 +34,10 @@ class NumberCreatorWindow:
         self.canvas.bind('<Button-1>', self.start_drawing)
         self.canvas.bind('<B1-Motion>', self.draw)
         self.canvas.bind('<ButtonRelease-1>', self.stop_drawing)
+        self.canvas.bind('<Button-2>', self.start_removing)
+        self.canvas.bind('<B2-Motion>', self.remove)
+        self.canvas.bind('<ButtonRelease-1>', self.stop_removing)
+
 
         # create grid lines
         for i in range(28):
@@ -58,9 +62,29 @@ class NumberCreatorWindow:
                 y1 = grid_y * 10
                 x2 = x1 + 10
                 y2 = y1 + 10
+                if self.grid_data[grid_y, grid_x] == 0:
+                    self.canvas.create_rectangle(x1, y1, x2, y2, fill="white", outline="grey")
+                    self.grid_data[grid_y, grid_x] = 1.0
+    
+    def start_removing(self, event):
+        self.removing = True
+        self.remove(event)
 
-                self.canvas.create_rectangle(x1, y1, x2, y2, fill="white", outline="grey")
-                self.grid_data[grid_y, grid_x] = 1.0
+    def stop_removing(self, event):
+        self.removing = False
+
+    def remove(self, event): 
+        if self.removing:
+            grid_x = event.x // 10
+            grid_y = event.y // 10
+
+            if 0 <= grid_x < 28 and 0 <= grid_y < 28:
+                x1 = grid_x * 10
+                y1 = grid_y * 10
+                x2 = x1 + 10
+                y2 = y1 + 10
+                self.canvas.create_rectangle(x1, y1, x2, y2, fill="black", outline="grey")
+                self.grid_data[grid_y, grid_x] = 0
         
     def clear_canvas(self):
         self.canvas.delete("all")
