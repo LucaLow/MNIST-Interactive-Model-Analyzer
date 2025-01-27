@@ -7,11 +7,13 @@ from tkinter import ttk
 
 class NumberCreatorWindow:
 
-    def __init__(self, root):
+    def __init__(self, root, blur=0.01):
         self.root = root
         self.root.title("MNIST Drawing App")
         
         self.drawing = False
+        self.removing = False
+        self.blur = blur
         self.grid_data = np.zeros((28, 28), dtype=np.float32)
         
         self._create_widgets()
@@ -62,9 +64,84 @@ class NumberCreatorWindow:
                 y1 = grid_y * 10
                 x2 = x1 + 10
                 y2 = y1 + 10
-                if self.grid_data[grid_y, grid_x] == 0:
-                    self.canvas.create_rectangle(x1, y1, x2, y2, fill="white", outline="grey")
+                if self.grid_data[grid_y, grid_x] != 1.0:
+                    self.canvas.create_rectangle(x1, y1, x2, y2, fill="#FFFFFF", outline="grey")
                     self.grid_data[grid_y, grid_x] = 1.0
+                if grid_y+1 < 28 and self.grid_data[grid_y+1, grid_x] < 1:
+                    self.grid_data[grid_y+1, grid_x] += 0.1*self.blur
+                    if self.grid_data[grid_y+1, grid_x] > 1:
+                        self.grid_data[grid_y+1, grid_x] = 1
+                    self.canvas.create_rectangle(
+                        x1, y1 + 10, x2, y2 + 10,
+                        fill="#"+f"{int(self.grid_data[grid_y + 1, grid_x] * 255):02X}" * 3,
+                        outline="grey"
+                    )
+                if grid_x+1 < 28 and self.grid_data[grid_y, grid_x+1] < 1:
+                    self.grid_data[grid_y, grid_x+1] += 0.1*self.blur
+                    if self.grid_data[grid_y, grid_x+1] > 1:
+                        self.grid_data[grid_y, grid_x+1] = 1
+                    self.canvas.create_rectangle(
+                        x1 + 10, y1, x2 + 10, y2,
+                        fill="#"+f"{int(self.grid_data[grid_y, grid_x + 1] * 255):02X}" * 3,
+                        outline="grey"
+                    )
+                if grid_y+1 < 28 and grid_x+1 < 28 and self.grid_data[grid_y+1, grid_x+1] < 1:
+                    self.grid_data[grid_y+1, grid_x+1] += 0.1*self.blur
+                    if self.grid_data[grid_y+1, grid_x+1] > 1:
+                        self.grid_data[grid_y+1, grid_x+1] = 1
+                    self.canvas.create_rectangle(
+                        x1 + 10, y1 + 10, x2 + 10, y2 + 10,
+                        fill="#"+f"{int(self.grid_data[grid_y + 1, grid_x + 1] * 255):02X}" * 3,
+                        outline="grey"
+                    )
+                if grid_y-1 >= 0 and self.grid_data[grid_y-1, grid_x] < 1:
+                    self.grid_data[grid_y-1, grid_x] += 0.1*self.blur
+                    if self.grid_data[grid_y-1, grid_x] > 1:
+                        self.grid_data[grid_y-1, grid_x] = 1
+                    self.canvas.create_rectangle(
+                        x1, y1 - 10, x2, y2 - 10,
+                        fill="#"+f"{int(self.grid_data[grid_y - 1, grid_x] * 255):02X}" * 3,
+                        outline="grey"
+                    )
+                if grid_x-1 >= 0 and self.grid_data[grid_y, grid_x-1] < 1:
+                    self.grid_data[grid_y, grid_x-1] += 0.1*self.blur
+                    if self.grid_data[grid_y, grid_x-1] > 1:
+                        self.grid_data[grid_y, grid_x-1] = 1
+                    self.canvas.create_rectangle(
+                        x1 - 10, y1, x2 - 10, y2,
+                        fill="#"+f"{int(self.grid_data[grid_y, grid_x - 1] * 255):02X}" * 3,
+                        outline="grey"
+                    )
+                if grid_y-1 >= 0 and grid_x-1 >= 0 and self.grid_data[grid_y-1, grid_x-1] < 1:
+                    self.grid_data[grid_y-1, grid_x-1] += 0.1*self.blur
+                    if self.grid_data[grid_y-1, grid_x-1] > 1:
+                        self.grid_data[grid_y-1, grid_x-1] = 1
+                    self.canvas.create_rectangle(
+                        x1 - 10, y1 - 10, x2 - 10, y2 - 10,
+                        fill="#"+f"{int(self.grid_data[grid_y - 1, grid_x - 1] * 255):02X}" * 3,
+                        outline="grey"
+                    )
+                if grid_y+1 < 28 and grid_x-1 >= 0 and self.grid_data[grid_y+1, grid_x-1] < 1:
+                    self.grid_data[grid_y+1, grid_x-1] += 0.1*self.blur
+                    if self.grid_data[grid_y+1, grid_x-1] > 1:
+                        self.grid_data[grid_y+1, grid_x-1] = 1
+                    self.canvas.create_rectangle(
+                        x1 - 10, y1 + 10, x2 - 10, y2 + 10,
+                        fill="#"+f"{int(self.grid_data[grid_y + 1, grid_x - 1] * 255):02X}" * 3,
+                        outline="grey"
+                    )
+                if grid_y-1 >= 0 and grid_x+1 < 28 and self.grid_data[grid_y-1, grid_x+1] < 1:
+                    self.grid_data[grid_y-1, grid_x+1] += 0.1*self.blur
+                    if self.grid_data[grid_y-1, grid_x+1] > 1:
+                        self.grid_data[grid_y-1, grid_x+1] = 1
+                    self.canvas.create_rectangle(
+                        x1 + 10, y1 - 10, x2 + 10, y2 - 10,
+                        fill="#"+f"{int(self.grid_data[grid_y - 1, grid_x + 1] * 255):02X}" * 3,
+                        outline="grey"
+                    )
+                
+
+                
     
     def start_removing(self, event):
         self.removing = True
@@ -83,7 +160,7 @@ class NumberCreatorWindow:
                 y1 = grid_y * 10
                 x2 = x1 + 10
                 y2 = y1 + 10
-                self.canvas.create_rectangle(x1, y1, x2, y2, fill="black", outline="grey")
+                self.canvas.create_rectangle(x1, y1, x2, y2, fill="#000000", outline="grey")
                 self.grid_data[grid_y, grid_x] = 0
         
     def clear_canvas(self):
