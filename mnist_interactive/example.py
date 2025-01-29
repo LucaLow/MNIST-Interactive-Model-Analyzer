@@ -5,7 +5,7 @@ import numberCreatorWindow as ncw
 import tensorflow as tf
 
 # Load the model
-model = tf.keras.models.load_model('MNIST-Interactive-Model-Analyzer/mnist_interactive/sampleModel.keras')
+model = tf.keras.models.load_model('sampleModel.keras')
 
 # create the tkinter window
 root = tk.Tk()
